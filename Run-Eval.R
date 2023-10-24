@@ -1,7 +1,11 @@
 
-geo <- "&geography=wa_spokane"
+# Enter the ESSENCE API syntax for the geographies of interest
+# Example: "&geography=wa_spokane"
+geo <- ""
 
-geo_name <- "Spokane Regional Health District"
+# Enter the name of the region/geography of interest
+# Example: "Spokane Regional Health District" 
+geo_name <- ""
 
 pacman_installed <- "pacman" %in% rownames(installed.packages())
 if (pacman_installed == FALSE) {

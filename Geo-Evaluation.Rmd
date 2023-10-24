@@ -1,0 +1,269 @@
+---
+title: "Threshold Evaluation"
+output: 
+  flexdashboard::flex_dashboard:
+    orientation: rows
+    vertical_layout: fill
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = FALSE, message = FALSE, warning = FALSE)
+
+library(flexdashboard); library(ggthemes); library(mem); library(gt); library(plotly)
+# files.source <- list.files("S:/DCHS/PHOCIS/Informatics/RHINO Program/12_Coding Resources and Support/R_Resources/SaraSupportCode")
+# sapply(paste0("S:/DCHS/PHOCIS/Informatics/RHINO Program/12_Coding Resources and Support/R_Resources/SaraSupportCode/",files.source),source)
+
+
+
+
+```
+
+Big 3 Individual   
+================================================
+
+## Row {data-height=750}
+
+### Time Series
+
+```{r mem_ind}
+
+subplot(covid_ts %>%
+          layout(
+            annotations = list(
+              x = min(resp_df$WeekEnd[resp_df$season=="2022-2023"])-2, y = 0.05,
+              text = "COVID", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 6)
+            )
+          ), 
+        flu_ts %>%
+          layout(
+            annotations = list(
+              x = min(resp_df$WeekEnd[resp_df$season=="2022-2023"])-2, y = 0.05,
+              text = "Influenza", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 6)
+            )
+          ),
+        rsv_ts %>%
+          layout(
+            annotations = list(
+              x = min(resp_df$WeekEnd[resp_df$season=="2022-2023"])-2, y = 0.01,
+              text = "RSV", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 6)
+            )
+          ),
+        ind_levels %>%
+          layout(
+            annotations = list(
+              x = min(resp_df$WeekEnd[resp_df$season=="2022-2023"])-2, y = 0.05,
+              text = "Any \nAbove", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 6)
+            )
+          ), 
+        nrows = 4, shareX = TRUE,
+        heights = c(.3,.3,.3,.1))
+
+```
+
+## Row
+
+### Threshold Levels
+
+```{r}
+
+datatable(geo_ind_mems, rownames = FALSE, options = list(dom = 't'))
+
+```
+
+
+
+
+Big 3 Combined  
+================================================
+
+## Row {data-height=750}
+
+### Time Series
+
+```{r mem}
+
+subplot(big3_ts, big3_levels, nrows = 2, shareX = TRUE, 
+        heights = c(0.9, 0.1))
+
+```
+
+## Row 
+
+### Threshold Levels
+
+```{r mem_table}
+
+big3_threshold_table <- data.frame(
+  Region = c(
+    geo_name
+  ),
+  Epidemic = c(
+    round(unique(mem_big3$epidemic),3)
+  ),
+  Medium = c(
+    round(unique(mem_big3$medium),3)
+  ),
+  High = c(
+    round(unique(mem_big3$high),3)
+  ),
+  `Very High` = c(
+    round(unique(mem_big3$veryhigh),3)
+  )
+) %>%
+  mutate_if(is.numeric, scales::label_percent(accuracy = .1))
+
+datatable(big3_threshold_table, rownames = FALSE, options = list(dom = 't'))
+
+```
+
+
+Respiratory DD Codes
+================================================
+
+## Row {data-height=750}
+
+### Time Series
+
+```{r bar_mem}
+
+subplot(bar_ts, bar_levels, nrows = 2, shareX = TRUE, 
+        heights = c(0.9, 0.1))
+
+```
+
+## Row
+
+### Threshold Levels
+
+```{r bar_mem_table}
+
+bar_threshold_table <- data.frame(
+  Region = c(
+    geo_name
+  ),
+  Epidemic = c(
+    round(unique(mem_bar$epidemic),3)
+  ),
+  Medium = c(
+    round(unique(mem_bar$medium),3)
+  ),
+  High = c(
+    round(unique(mem_bar$high),3)
+  ),
+  `Very High` = c(
+    round(unique(mem_bar$veryhigh),3)
+  )
+) %>%
+  mutate_if(is.numeric, scales::label_percent(accuracy = .1))
+
+datatable(bar_threshold_table, rownames = FALSE, options = list(dom = 't'))
+
+```
+
+
+Respiratory DD Codes and Terms
+================================================
+
+## Row {data-height=750}
+
+### Time Series
+
+```{r resp_mem}
+
+subplot(resp_ts, resp_levels, nrows = 2, shareX = TRUE, 
+        heights = c(0.9, 0.1))
+
+```
+
+## Row
+
+### Threshold Levels
+
+```{r resp_mem_table}
+
+resp_threshold_table <- data.frame(
+  Region = c(
+    geo_name
+  ),
+  Epidemic = c(
+    round(unique(mem_resp$epidemic),3)
+  ),
+  Medium = c(
+    round(unique(mem_resp$medium),3)
+  ),
+  High = c(
+    round(unique(mem_resp$high),3)
+  ),
+  `Very High` = c(
+    round(unique(mem_resp$veryhigh),3)
+  )
+) %>%
+  mutate_if(is.numeric, scales::label_percent(accuracy = .1))
+
+datatable(resp_threshold_table, rownames = FALSE, options = list(dom = 't'))
+
+```
+
+
+Week Over Week Comparison
+================================================
+
+## Row
+
+### Weeks Above Epidemic Threshold
+
+```{r}
+
+subplot(
+  ind_levels %>%
+          layout(
+            annotations = list(
+              x = min(resp_df$WeekEnd[resp_df$season=="2022-2023"])-2, y = 0.05,
+              text = "Big 3 \nIndividual", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 10)
+            )
+          ),
+  big3_levels %>%
+          layout(
+            annotations = list(
+              x = min(big3_df$WeekEnd[big3_df$season=="2022-2023"])-2, y = 0.05,
+              text = "Big 3 \nCombined", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 10)
+            ),
+            showlegend = FALSE
+          ),
+  bar_levels %>%
+          layout(
+            annotations = list(
+              x = min(bar_df$WeekEnd[bar_df$season=="2022-2023"])-2, y = 0.05,
+              text = "Resp \nDD", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 10)
+            ),
+            showlegend = FALSE
+          ),
+  resp_levels %>%
+          layout(
+            annotations = list(
+              x = min(resp_df$WeekEnd[resp_df$season=="2022-2023"])-2, y = 0.05,
+              text = "Resp \nDD+CC", textangle = 270,
+              xref = "x", yref = "y", xanchor = "right", showarrow = FALSE,
+              font = list(size = 10)
+            ),
+            showlegend = FALSE
+          ),
+  nrows = 4, shareX = TRUE
+)
+
+```
+

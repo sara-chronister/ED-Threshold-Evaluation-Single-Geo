@@ -17,3 +17,4 @@ covid_thresholds <- data.frame(
   high = NA, 
   veryhigh = NA)
 save(covid_thresholds, file = "Data/covid_thresholds.RData")
+load("Data/covid_thresholds.RData")

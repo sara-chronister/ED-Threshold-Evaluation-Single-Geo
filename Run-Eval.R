@@ -48,7 +48,7 @@ pacman::p_load(packages_to_load, update = FALSE, character.only = TRUE)
 
 source("Scripts/UserCredentials.R")
 source("Scripts/PullData.R")
-source("COVIDprep.R")
+source("Scripts/COVIDprep.R")
 source("Scripts/MEMfunctions.R")
 source("Scripts/GEOprep.R")
 

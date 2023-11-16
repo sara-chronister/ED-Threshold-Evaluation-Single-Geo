@@ -40,7 +40,8 @@ packages_to_load <- c(
   "mem",
   "flexdashboard",
   "rmarkdown",
-  "DT"
+  "DT",
+  "gt"
 )
 
 pacman::p_load(packages_to_load, update = FALSE, character.only = TRUE)

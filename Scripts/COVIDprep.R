@@ -12,9 +12,9 @@ write.csv(covid_df,file = "Data/covid_df.csv",
 ## USE MEM SHINY APP TO DETERMINE THRESHOLDS AND FILL IN BELOW
 covid_thresholds <- data.frame(
   Condition = "COVID",
-  epidemic = NA,
-  medium = NA, 
-  high = NA, 
-  veryhigh = NA)
+  epidemic = .03,
+  medium = .035, 
+  high = .04, 
+  veryhigh = .05)
 save(covid_thresholds, file = "Data/covid_thresholds.RData")
 load("Data/covid_thresholds.RData")

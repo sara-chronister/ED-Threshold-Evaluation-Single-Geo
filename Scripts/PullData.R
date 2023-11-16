@@ -37,8 +37,6 @@ get_essence_data <- function(url, start_date = NULL, end_date = NULL) {
   
 }
 
-base_url <- "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?datasource=va_hosp&startDate=25Jun2023&medicalGroupingSystem=essencesyndromes&userId=5099&endDate=30Sep2023&percentParam=noPercent&hospFacilityType=emergency%20care&aqtTarget=TableBuilder&geographySystem=hospitalregion&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolution&columnField=geographyhospitalregion"
-
 urls <- data.frame(
   Condition = c(
     "COVID",
@@ -73,12 +71,22 @@ urls <- data.frame(
 new_start <- "2017-09-03"
 new_end <- ceiling_date(Sys.Date()-7, "week")-1
 
-get_resp_data <- function(base_url, url_add_on, geo, 
+get_resp_data <- function(datasource = c("patient_site", "patient_region", 
+                                         "facility_site", "facility_region", 
+                                         "hhs_national", "hhs_region"),
+                          condition_url, geo_url, 
                           new_start, new_end) {
   
-  geo_new <- geo #geo_apis$APIsyntax[geo_apis$GeoName==geo]
+  base_url <- switch (datasource,
+    "patient_region" = "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?&datasource=va_er&startDate=23Jul2023&medicalGroupingSystem=essencesyndromes&userId=5099&endDate=28Oct2023&percentParam=noPercent&hospFacilityType=emergency%20care&aqtTarget=TableBuilder&geographySystem=region&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolution&columnField=geographyregion",
+    "patient_site" = "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?&datasource=va_er&startDate=23Jul2023&medicalGroupingSystem=essencesyndromes&userId=5099&endDate=28Oct2023&percentParam=noPercent&hospFacilityType=emergency%20care&aqtTarget=TableBuilder&geographySystem=region&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolution&columnField=site",
+    "facility_region" = "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?datasource=va_hosp&startDate=25Jun2023&medicalGroupingSystem=essencesyndromes&userId=5099&endDate=30Sep2023&percentParam=noPercent&hospFacilityType=emergency%20care&aqtTarget=TableBuilder&geographySystem=hospitalregion&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolution&columnField=geographyhospitalregion",
+    "facility_site" = "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?datasource=va_hosp&startDate=25Jun2023&medicalGroupingSystem=essencesyndromes&userId=5099&endDate=30Sep2023&percentParam=noPercent&hospFacilityType=emergency%20care&aqtTarget=TableBuilder&geographySystem=hospital&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolution&columnField=site",
+    "hhs_national" = "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?endDate=28Oct2023&percentParam=noPercent&datasource=va_hospdreg&startDate=23Jul2023&medicalGroupingSystem=essencesyndromes&userId=5099&aqtTarget=TableBuilder&geographySystem=hospitaldhhsregion&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolutioncolumnField=geographyhospitaldhhsregion",
+    "hhs_region" = "https://essence2.syndromicsurveillance.org/nssp_essence/api/tableBuilder?endDate=28Oct2023&percentParam=noPercent&datasource=va_hospdreg&startDate=23Jul2023&medicalGroupingSystem=essencesyndromes&userId=5099&aqtTarget=TableBuilder&geographySystem=hospitaldhhsregion&detector=nodetectordetector&timeResolution=weekly&hasBeenE=1&rowFields=timeResolutioncolumnField=geographyhospitaldhhsregion"
+  )
   
-  new_url <- paste0(base_url, url_add_on, geo_new)
+  new_url <- paste0(base_url, condition_url, geo_url)
   
   df_raw <- get_essence_data(new_url, start_date = new_start, end_date = new_end)
   
@@ -97,8 +105,11 @@ resp_list <- list()
 
 for (i in 1:nrow(urls)) {
   
-  resp_list[[i]] <- get_resp_data(base_url, urls$url[i], geo = geo,
-                                  new_start = "2017-09-03", new_end = new_end)
+  resp_list[[i]] <- get_resp_data(datasource = datasource, 
+                                  condition_url = urls$url[i], 
+                                  geo_url = geo_url,
+                                  new_start = "2017-09-03", 
+                                  new_end = new_end)
   
 }
 

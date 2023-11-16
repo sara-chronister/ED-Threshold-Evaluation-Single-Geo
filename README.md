@@ -26,7 +26,8 @@ This Rproj is set up to explaore MEM thresholds applied to ED respiratory visits
 8. Set the First Week to sometimes between 30-4o and the Last Week to the week just before the First Week (e.g., 35 for First Week and 34 for Last Week). Feel free to test how the model changes depending on what week you choose as your start.
 9. Click on the "Evolution" tab then on the "Detailed" tab that appears.
 10. In the bottom row ("next" , take the values for "Epidemic thr.", "Medium thr.", "High thr.", and "Very high thr." and input them into their respective places in lines 14-18 of the "COVIDprep.R" script.
-11. Save the "COVIDprep.R" script and close it.
+   - NOTE: you must enter the values as the raw/unadjusted value and not the adjusted/human readable value. For example, if the Shiny app shows 4.2% you must enter it as 0.042 in the R script.
+12. Save the "COVIDprep.R" script and close it.
 
 ## Step 4: Generate Evaluation
 
